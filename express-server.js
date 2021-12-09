@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + '/public'));
+const bcrypt = require('bcryptjs');
 
 //
 // HELPER FUNCTIONS
@@ -201,15 +202,16 @@ app.post("/register", (req, res) => {
 const userEmail = req.body.email;
 const userPassword = req.body.password;
 const newUserID = generateRandomString();
+const hashed = bcrypt.hashSync(userPassword, 10)
 
 if (!userEmail || !userPassword) {
   res.status(400).send();
 } else if (checkRegisteredUsers(users, req.body.email)) {
   res.status(400).send();
 } else {
-users[newUserID] = {id: newUserID, email: userEmail, password: userPassword};
+users[newUserID] = {id: newUserID, email: userEmail, password: hashed};
 res.cookie("user_id",newUserID)
-
+console.log(users)
 
 res.redirect("/urls");
 }
@@ -221,14 +223,17 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 app.post("/login", (req, res) => {
+  const password = req.body.password;
   if(checkRegisteredUsers(users, req.body.email)) {
     for(const user in users) {
-      if(users[user].email === req.body.email && users[user].password === req.body.password) {
+      
+      if(users[user].email === req.body.email && bcrypt.compareSync(password, users[user].password)) {
         res.cookie("user_id",users[user].id);
         res.redirect("/urls");
       }
     } 
   }else res.status(403).send()
+      
   
   
 });
