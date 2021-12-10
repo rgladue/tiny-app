@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="/css/main.css">
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
 </head>
-<body>
-
+<body id="reg-body">
+  <div id="reg-form">
+    <h1 id="title-reg">TinyApp<p id="RTM-reg-title">&reg;</p></h1>
   <form method="post" action="/register">
     <label for="email">Enter Your Email</label>
+    <br>
     <input type="text" name="email" placeholder="example@example.com">
     <br>
+    <br>
     <label for="password">Enter Your Password</label>
+    <br>
     <input type="password" name="password" placeholder="Choose A Password">
     <br>
+    <br>
+    <p>Already registered? <a href="/login">Login Here!</a></p>
     <input type="submit" id="reg-btn" value="Register">
-
+  </div>
   </form>
   
 </body>
