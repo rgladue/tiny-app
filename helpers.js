@@ -24,14 +24,6 @@ for (let Key in usersObj) {
 
 };
 
-const URLGrabber = (URLDB, user_id) => {
-for (const key in URLDB) {
-  if (URLDB[key].userID === user_id) {
-    return URLDB[key].longURL;
-  }
-}
-
-};
 
 
 const urlsForUser = function(id, UDB) {
@@ -45,4 +37,4 @@ const urlsForUser = function(id, UDB) {
 };
 
 
-module.exports = { generateRandomString, getUserByEmail, checkRegisteredUsers, urlsForUser, URLGrabber };
+module.exports = { generateRandomString, getUserByEmail, checkRegisteredUsers, urlsForUser, };
