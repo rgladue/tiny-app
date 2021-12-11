@@ -96,13 +96,14 @@ app.get("/urls", (req, res) => {
 app.get("/urls/:shortURL/edit", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/urls");
-  }
+  } else {
   const account = getUserByEmail(users, req.session.user_id);
 
   const templateVars = {
     user: account,
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
+  }
   };
 
   res.render("urls_show", templateVars);
@@ -180,9 +181,9 @@ app.post("/register", (req, res) => {
   const hashed = bcrypt.hashSync(userPassword, 10);
 
   if (!userEmail || !userPassword) {
-    res.status(400).send();
+    res.redirect("/errorpg");
   } else if (checkRegisteredUsers(users, req.body.email)) {
-    res.status(400).send();
+    res.redirect("/errorpg");
   } else {
     users[newUserID] = { id: newUserID, email: userEmail, password: hashed };
     req.session.user_id = newUserID;
@@ -210,13 +211,18 @@ app.post("/login", (req, res) => {
         res.redirect("/urls");
       }
     }
-  } else res.status(403).send();
+  } else res.redirect("/errorpg");
 });
 
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/urls");
 });
+
+app.get("/errorpg", (req, res) => {
+
+  res.render("error")
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
