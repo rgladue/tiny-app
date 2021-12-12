@@ -21,7 +21,7 @@
 #login-btn {
   background-color:aquamarine;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 16px;
   margin-top: 30px;
   font-family:monospace;
@@ -71,7 +71,7 @@
 #reg-btn {
   background-color:aquamarine;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 16px;
   margin-top: 30px;
   font-family:monospace;
