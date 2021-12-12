@@ -97,16 +97,16 @@ app.get("/urls/:shortURL/edit", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/urls");
   } else {
+    
   const account = getUserByEmail(users, req.session.user_id);
-
   const templateVars = {
     user: account,
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
   }
+  res.render("urls_show", templateVars);
   };
 
-  res.render("urls_show", templateVars);
 });
 
 //redirects to /u/:shortURL which in turn will redirect to longURL homepage
