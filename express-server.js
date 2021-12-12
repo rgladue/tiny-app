@@ -58,6 +58,7 @@ const users = {
 // APP ROUTING
 //
 
+// HOME REDIRECT TO LOGIN PAGE
 app.get("/", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/login");
@@ -68,6 +69,7 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+// CREATE NEW LINK
 app.get("/urls/new", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/login");
@@ -92,7 +94,44 @@ app.get("/urls", (req, res) => {
   }
 });
 
-//rerouting the edit request to the urls_show page
+
+//redirects to /u/:shortURL which in turn will redirect to longURL homepage
+app.get("/urls/:shortURL", (req, res) => {
+  if (!req.session.user_id) {
+    res.redirect("/urls");
+  }
+  const account = getUserByEmail(users, req.session.user_id);
+  
+  const templateVars = {
+    user: account,
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL].longURL,
+  };
+  
+  res.render("urls_show", templateVars);
+});
+
+app.post("/urls", (req, res) => {
+  const shortUrl = generateRandomString();
+  
+  urlDatabase[shortUrl] = {
+    longURL: req.body.longURL,
+    userID: req.session.user_id,
+  };
+  
+  res.redirect(`/urls/${shortUrl}`);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  const link = urlDatabase[req.params.shortURL].longURL;
+  res.redirect(link);
+});
+
+//
+//EDITING, DELETING, AND UPDATING THE LINKS
+//
+
+// LINK EDITING
 app.get("/urls/:shortURL/edit", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/urls");
@@ -109,39 +148,7 @@ app.get("/urls/:shortURL/edit", (req, res) => {
 
 });
 
-//redirects to /u/:shortURL which in turn will redirect to longURL homepage
-app.get("/urls/:shortURL", (req, res) => {
-  if (!req.session.user_id) {
-    res.redirect("/urls");
-  }
-  const account = getUserByEmail(users, req.session.user_id);
-
-  const templateVars = {
-    user: account,
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-  };
-
-  res.render("urls_show", templateVars);
-});
-
-app.post("/urls", (req, res) => {
-  const shortUrl = generateRandomString();
-
-  urlDatabase[shortUrl] = {
-    longURL: req.body.longURL,
-    userID: req.session.user_id,
-  };
-
-  res.redirect(`/urls/${shortUrl}`);
-});
-
-app.get("/u/:shortURL", (req, res) => {
-  const link = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(link);
-});
-
-//deleting specific URL and redirecting to main URL listing page
+// LINK DELETE
 app.post("/urls/:shortURL/delete", (req, res) => {
   if (req.session.user_id) {
     const shortURL = req.params.shortURL;
@@ -150,6 +157,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   } else res.redirect("/urls");
 });
 
+// LINK UPDATE
 app.post("/urls/:shortURL/update", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/urls");
@@ -166,7 +174,11 @@ app.post("/urls/:shortURL/update", (req, res) => {
   }
 });
 
+
+//
 // REGISTRATION
+//
+
 app.get("/register", (req, res) => {
   if (req.session.user_id) {
     res.redirect("/urls");
